@@ -12,7 +12,7 @@ from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
 
 from core.models import Organizacion, Perfil
-from optica.models import Ajustes, Marca, Categoria, Modelo, FotoModelo, Consulta, Cita, Entrada, Opinion
+from optica.models import Ajustes, Marca, Categoria, Modelo, FotoModelo, Consulta, Cita, Entrada, Opinion, Pagina
 from optica.utils import optimize_image
 
 
@@ -52,7 +52,8 @@ def main():
     marcas_data = ["Ray-Ban", "Oakley", "Gucci", "Prada", "Tom Ford"]
     marcas = {}
     for i, nombre in enumerate(marcas_data):
-        m, _ = Marca.objects.get_or_create(organizacion=org, slug=nombre.lower(), defaults={"nombre": nombre, "orden": i, "visible": True})
+        from django.utils.text import slugify
+        m, _ = Marca.objects.get_or_create(organizacion=org, slug=slugify(nombre), defaults={"nombre": nombre, "orden": i, "visible": True})
         marcas[nombre] = m
 
     cats_data = ["Gafas de sol", "Monturas graduadas", "Infantil", "Deportivas", "Accesorios"]
@@ -70,8 +71,9 @@ def main():
         marca = marcas[marcas_data[i % len(marcas_data)]]
         cat = cats[cats_data[i % len(cats_data)]]
         nombre = f"Modelo {i+1:02d}"
+        from django.utils.text import slugify
         m, created = Modelo.objects.get_or_create(
-            organizacion=org, slug=f"{marca.slug}-{nombre.lower().replace(' ', '-')}",
+            organizacion=org, slug=slugify(f"{marca.nombre}-{nombre}"),
             defaults={
                 "marca": marca, "categoria": cat, "nombre": nombre,
                 "descripcion_corta": "Montura ligera y cómoda.",
@@ -130,6 +132,16 @@ def main():
             organizacion=org, nombre=f"Cliente feliz {i+1}",
             defaults={"texto": "Excelente atención y monturas preciosas.", "visible": True},
         )
+
+    paginas_data = [
+        ("nosotros", "Nosotros", "Somos tu óptica de confianza en Espartinas. Revisiones, adaptación de lentillas, reparaciones y un amplio catálogo de monturas."),
+        ("aviso-legal", "Aviso legal", "Texto legal pendiente de completar por la titular de la óptica."),
+        ("privacidad", "Política de privacidad", "Los datos del formulario se usan solo para responder consultas y citas."),
+        ("cookies", "Política de cookies", "Esta web usa cookies técnicas necesarias. No se usan cookies de seguimiento sin consentimiento."),
+        ("faq", "Preguntas frecuentes", "¿Cuándo cambiar de gafas? ¿Cómo cuidarlas? ¿Qué incluye la revisión?"),
+    ]
+    for slug, titulo, contenido in paginas_data:
+        Pagina.objects.get_or_create(organizacion=org, slug=slug, defaults={"titulo": titulo, "contenido": contenido, "publicada": True})
 
     print("Seed completado.")
 

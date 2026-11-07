@@ -2,5 +2,5 @@
 {% block title %}Aviso legal{% endblock %}
 {% block content %}
 <h1 class="h3">Aviso legal</h1>
-<p>Texto legal pendiente de completar por la titular de la óptica.</p>
+{% if pagina %}<div>{{ pagina.contenido|linebreaks }}</div>{% else %}<p>Texto legal pendiente de completar por la titular de la óptica.</p>{% endif %}
 {% endblock %}

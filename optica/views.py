@@ -11,12 +11,12 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 
-from core.decorators import gestor_required
+from core.decorators import gestor_required, superuser_required
 
-from .forms import ConsultaForm, CitaForm, ModeloForm, MarcaForm, CategoriaForm, AjustesForm, EntradaForm, RecordatorioForm
+from .forms import ConsultaForm, CitaForm, ModeloForm, MarcaForm, CategoriaForm, AjustesForm, EntradaForm, RecordatorioForm, PaginaForm
 from .models import (
     Ajustes, Marca, Categoria, Modelo, FotoModelo, Consulta, Cita, Entrada, Opinion,
-    PushSubscription, RecordatorioRevision,
+    PushSubscription, RecordatorioRevision, Pagina,
 )
 
 
@@ -252,19 +252,27 @@ def contacto_ok(request):
 
 
 def nosotros(request):
-    return render(request, "optica/publico/nosotros.html", {"ajustes": _ajustes(request)})
+    org = _org(request)
+    pagina = Pagina.objects.filter(organizacion=org, slug="nosotros", publicada=True).first()
+    return render(request, "optica/publico/nosotros.html", {"ajustes": _ajustes(request), "pagina": pagina})
 
 
 def aviso_legal(request):
-    return render(request, "optica/publico/legal/aviso_legal.html")
+    org = _org(request)
+    pagina = Pagina.objects.filter(organizacion=org, slug="aviso-legal", publicada=True).first()
+    return render(request, "optica/publico/legal/aviso_legal.html", {"pagina": pagina})
 
 
 def privacidad(request):
-    return render(request, "optica/publico/legal/privacidad.html")
+    org = _org(request)
+    pagina = Pagina.objects.filter(organizacion=org, slug="privacidad", publicada=True).first()
+    return render(request, "optica/publico/legal/privacidad.html", {"pagina": pagina})
 
 
 def cookies(request):
-    return render(request, "optica/publico/legal/cookies.html")
+    org = _org(request)
+    pagina = Pagina.objects.filter(organizacion=org, slug="cookies", publicada=True).first()
+    return render(request, "optica/publico/legal/cookies.html", {"pagina": pagina})
 
 
 def probador(request):
@@ -349,6 +357,127 @@ def gestion_kiosco(request):
     if not destacados.exists():
         destacados = Modelo.objects.filter(organizacion=org, visible=True)[:8]
     return render(request, "optica/gestion/kiosco.html", {"destacados": destacados})
+
+
+def pagina(request, slug):
+    org = _org(request)
+    p = get_object_or_404(Pagina, slug=slug, organizacion=org, publicada=True)
+    return render(request, "optica/publico/pagina.html", {"pagina": p})
+
+
+@gestor_required
+def gestion_paginas(request):
+    org = _org(request)
+    paginas = Pagina.objects.filter(organizacion=org)
+    if request.method == "POST":
+        form = PaginaForm(request.POST)
+        if form.is_valid():
+            pg = form.save(commit=False)
+            pg.organizacion = org
+            pg.save()
+            return redirect("optica:gestion_paginas")
+    else:
+        form = PaginaForm()
+    return render(request, "optica/gestion/paginas.html", {"form": form, "paginas": paginas})
+
+
+@gestor_required
+def gestion_pagina_editar(request, pk):
+    org = _org(request)
+    pg = get_object_or_404(Pagina, pk=pk, organizacion=org)
+    if request.method == "POST":
+        form = PaginaForm(request.POST, instance=pg)
+        if form.is_valid():
+            form.save()
+            return redirect("optica:gestion_paginas")
+    else:
+        form = PaginaForm(instance=pg)
+    return render(request, "optica/gestion/pagina_form.html", {"form": form, "pagina": pg})
+
+
+@superuser_required
+def gestion_usuarios(request):
+    from django.contrib.auth.models import User
+    org = _org(request)
+    users = User.objects.all().select_related("perfil")
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+        email = request.POST.get("email", "")
+        rol = request.POST.get("rol", "gestor")
+        org_id = request.POST.get("organizacion")
+        if username and password:
+            u = User.objects.create_user(username=username, password=password, email=email)
+            from core.models import Organizacion, Perfil
+            o = Organizacion.objects.filter(pk=org_id).first() or org
+            Perfil.objects.create(user=u, organizacion=o, rol=rol)
+            return redirect("optica:gestion_usuarios")
+    from core.models import Organizacion
+    orgs = Organizacion.objects.all()
+    return render(request, "optica/gestion/usuarios.html", {"users": users, "orgs": orgs})
+
+
+@gestor_required
+def gestion_2fa(request):
+    from django.contrib.auth import login, get_user_model
+    import pyotp
+    uid = request.session.get("pending_2fa_user")
+    if not uid:
+        return redirect("optica:gestion_login")
+    User = get_user_model()
+    user = User.objects.get(pk=uid)
+    error = None
+    if request.method == "POST":
+        code = request.POST.get("code", "").strip()
+        secret = user.perfil.totp_secret
+        if pyotp.TOTP(secret).verify(code, valid_window=1):
+            login(request, user, backend="django.contrib.auth.backends.ModelBackend")
+            if request.session.get("remember_me"):
+                request.session.set_expiry(60 * 60 * 24 * 30)
+            else:
+                request.session.set_expiry(0)
+            request.session.pop("pending_2fa_user", None)
+            request.session.pop("remember_me", None)
+            return redirect("optica:gestion_dashboard")
+        error = "Código incorrecto."
+    return render(request, "optica/gestion/2fa.html", {"error": error})
+
+
+@gestor_required
+def gestion_2fa_setup(request):
+    from django.contrib.auth import get_user_model
+    import pyotp, qrcode
+    from io import BytesIO
+    from django.http import HttpResponse
+    user = request.user
+    perfil = user.perfil
+    if not perfil.totp_secret:
+        perfil.totp_secret = pyotp.random_base32()
+        perfil.save(update_fields=["totp_secret"])
+    secret = perfil.totp_secret
+    totp = pyotp.TOTP(secret)
+    uri = totp.provisioning_uri(name=user.username, issuer_name="Óptica Espartinas")
+    img = qrcode.make(uri)
+    buf = BytesIO()
+    img.save(buf, format="PNG")
+    buf.seek(0)
+    if request.GET.get("qr"):
+        return HttpResponse(buf.getvalue(), content_type="image/png")
+    return render(request, "optica/gestion/2fa_setup.html", {"secret": secret})
+
+
+def manifest(request):
+    from django.http import HttpResponse
+    import os
+    from django.conf import settings
+    path = os.path.join(settings.BASE_DIR, "static", "manifest.webmanifest")
+    with open(path, "rb") as f:
+        return HttpResponse(f.read(), content_type="application/manifest+json")
+
+
+def health(request):
+    from django.http import JsonResponse
+    return JsonResponse({"status": "ok"})
 
 
 def robots_txt(request):
@@ -487,16 +616,20 @@ def _enviar_correo_cita(org, cita):
 
 def gestion_login(request):
     from django.contrib.auth import authenticate, login
-    from django.contrib.auth.forms import AuthenticationForm
     error = None
     if request.method == "POST":
-        form = AuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            user = form.get_user()
-            # limitar intentos? simple
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
             if not (user.is_superuser or getattr(user, "perfil", None) and user.perfil.es_gestor):
                 error = "No tienes acceso a la gestión."
             else:
+                perfil = getattr(user, "perfil", None)
+                if perfil is not None and perfil.totp_secret:
+                    request.session["pending_2fa_user"] = user.pk
+                    request.session["remember_me"] = bool(request.POST.get("remember"))
+                    return redirect("optica:gestion_2fa")
                 login(request, user, backend="django.contrib.auth.backends.ModelBackend")
                 if request.POST.get("remember"):
                     request.session.set_expiry(60 * 60 * 24 * 30)
@@ -505,9 +638,7 @@ def gestion_login(request):
                 return redirect("optica:gestion_dashboard")
         else:
             error = "Usuario o contraseña incorrectos."
-    else:
-        form = AuthenticationForm()
-    return render(request, "optica/gestion/login.html", {"form": form, "error": error})
+    return render(request, "optica/gestion/login.html", {"error": error})
 
 
 def gestion_logout(request):

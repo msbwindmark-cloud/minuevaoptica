@@ -17,8 +17,11 @@
   <a class="btn btn-outline-primary" href="{% url 'optica:gestion_consultas' %}">Consultas</a>
   <a class="btn btn-outline-primary" href="{% url 'optica:gestion_citas' %}">Citas</a>
   <a class="btn btn-outline-primary" href="{% url 'optica:gestion_ajustes' %}">Ajustes</a>
+  <a class="btn btn-outline-secondary" href="{% url 'optica:gestion_2fa_setup' %}">Activar 2FA</a>
   <a class="btn btn-outline-primary" href="{% url 'optica:gestion_estadisticas' %}">Estadísticas</a>
   <a class="btn btn-outline-primary" href="{% url 'optica:gestion_recordatorios' %}">Recordatorios</a>
   <a class="btn btn-outline-primary" href="{% url 'optica:gestion_kiosco' %}">Modo tienda</a>
+  {% if user.is_superuser %}<a class="btn btn-outline-danger" href="{% url 'optica:gestion_usuarios' %}">Usuarios</a>
+  <a class="btn btn-outline-danger" href="{% url 'optica:gestion_paginas' %}">Páginas</a>{% endif %}
 </nav>
 {% endblock %}

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Páginas{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Páginas editables</h1>
+<form method="post" class="card p-3 mb-3">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button class="btn btn-primary">Crear</button>
+</form>
+<ul class="list-group">
+  {% for p in paginas %}
+  <li class="list-group-item d-flex justify-content-between">
+    <span>{{ p.titulo }} ({{ p.slug }}) {% if not p.publicada %}<span class="badge bg-secondary">oculta</span>{% endif %}</span>
+    <a class="btn btn-sm btn-outline-primary" href="{% url 'optica:gestion_pagina_editar' p.pk %}">Editar</a>
+  </li>
+  {% empty %}<li class="list-group-item">Sin páginas</li>{% endfor %}
+</ul>
+{% endblock %}

@@ -3,19 +3,29 @@
 {% block content %}
 <div class="row justify-content-center">
   <div class="col-md-4">
-    <div class="card p-3">
-      <h1 class="h4">Acceso gestión</h1>
+    <div class="card p-4 shadow">
+      <h1 class="h4 mb-3">Acceso gestión</h1>
       <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
-        <div class="form-check mb-2">
+        <div class="mb-3">
+          <label class="form-label">Usuario</label>
+          <input type="text" name="username" class="form-control" required autofocus>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Contraseña</label>
+          <div class="input-group">
+            <input type="password" name="password" id="pwd" class="form-control" required>
+            <button type="button" class="btn btn-outline-secondary" onclick="const p=document.getElementById('pwd');p.type=p.type==='password'?'text':'password';">👁</button>
+          </div>
+        </div>
+        <div class="form-check mb-3">
           <input class="form-check-input" type="checkbox" name="remember" id="remember">
           <label class="form-check-label" for="remember">Recordarme</label>
         </div>
         <button class="btn btn-primary w-100">Entrar</button>
       </form>
-      {% if error %}<div class="alert alert-danger mt-2">{{ error }}</div>{% endif %}
-      <p class="small mt-2"><a href="/admin/password_reset/">¿Olvidaste la contraseña?</a></p>
+      {% if error %}<div class="alert alert-danger mt-3">{{ error }}</div>{% endif %}
+      <p class="small mt-3 text-center"><a href="/admin/password_reset/">¿Olvidaste la contraseña?</a></p>
     </div>
   </div>
 </div>

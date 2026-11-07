@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Configurar 2FA{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Configurar autenticación en dos pasos</h1>
+<p>Escanea este código QR con Google Authenticator o Authy:</p>
+<img src="{% url 'optica:gestion_2fa_setup' %}?qr=1" alt="QR 2FA" class="img-fluid mb-3">
+<p><strong>Secreto manual:</strong> <code>{{ secret }}</code></p>
+<p class="text-muted">A partir de ahora se te pedirá el código al iniciar sesión.</p>
+{% endblock %}

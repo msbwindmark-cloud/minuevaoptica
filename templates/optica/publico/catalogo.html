@@ -46,4 +46,25 @@
 <div id="catalogo-grid">
   {% include "optica/publico/_catalogo_grid.html" %}
 </div>
+<script>
+const filtrosForm = document.getElementById('filtros');
+const grid = document.getElementById('catalogo-grid');
+let debounceTimer;
+async function filtrarCatalogo() {
+  const fd = new FormData(filtrosForm);
+  const params = new URLSearchParams(fd).toString();
+  const res = await fetch('/catalogo/?' + params, {headers: {'X-Requested-With':'XMLHttpRequest'}});
+  const json = await res.json();
+  grid.innerHTML = json.html;
+}
+function scheduleFilter() {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(filtrarCatalogo, 300);
+}
+filtrosForm.querySelectorAll('input, select').forEach(el => {
+  el.addEventListener('input', scheduleFilter);
+  el.addEventListener('change', scheduleFilter);
+});
+filtrosForm.addEventListener('submit', e => { e.preventDefault(); filtrarCatalogo(); });
+</script>
 {% endblock %}

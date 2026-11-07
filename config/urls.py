@@ -12,6 +12,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="sitemap"),
     path("i18n/", include("django.conf.urls.i18n")),
+    path("accounts/", include("django.contrib.auth.urls")),
     path("", include("optica.urls")),
 ]
 

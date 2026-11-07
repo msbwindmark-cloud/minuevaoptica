@@ -12,7 +12,7 @@
   "url": "{{ request.build_absolute_uri }}"
 }
 </script>
-<section class="py-5 text-center">
+<section class="hero text-center mb-4">
   <h1 class="display-5 fw-bold">{{ ajustes.texto_portada|default:"Bienvenido a nuestra óptica" }}</h1>
   <p class="lead">Descubre nuestras monturas y servicios.</p>
   <span class="badge {% if abierto.abierto %}bg-success{% else %}bg-secondary{% endif %} fs-6">{{ abierto.texto }}</span>

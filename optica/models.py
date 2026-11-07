@@ -302,6 +302,22 @@ class Opinion(TenantModel):
         return self.nombre
 
 
+class Pagina(TenantModel):
+    slug = models.SlugField(max_length=60)
+    titulo = models.CharField(max_length=150)
+    contenido = models.TextField()
+    publicada = models.BooleanField(default=True)
+    actualizado = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ("organizacion", "slug")
+        verbose_name = "Página"
+        verbose_name_plural = "Páginas"
+
+    def __str__(self):
+        return self.titulo
+
+
 class PushSubscription(TenantModel):
     user = models.ForeignKey("auth.User", on_delete=models.CASCADE, related_name="push_subscriptions")
     endpoint = models.URLField(max_length=500, unique=True)

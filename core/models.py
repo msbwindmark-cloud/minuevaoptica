@@ -81,6 +81,7 @@ class Perfil(TenantModel):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="perfil")
     rol = models.CharField(max_length=20, choices=ROL_CHOICES, default="gestor")
     telefono = models.CharField(max_length=30, blank=True)
+    totp_secret = models.CharField(max_length=64, blank=True)
 
     class Meta:
         verbose_name = "Perfil"

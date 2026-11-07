@@ -1,7 +1,7 @@
 from django import forms
 from .models import (
     Consulta, Cita, Modelo, Marca, Categoria, Ajustes, FotoModelo, Entrada,
-    RecordatorioRevision,
+    RecordatorioRevision, Pagina,
 )
 
 
@@ -130,6 +130,18 @@ class RecordatorioForm(forms.ModelForm):
             "email": forms.EmailInput(attrs={"class": "form-control"}),
             "telefono": forms.TextInput(attrs={"class": "form-control"}),
             "fecha_ultima_revision": forms.DateInput(attrs={"class": "form-control", "type": "date"}),
+        }
+
+
+class PaginaForm(forms.ModelForm):
+    class Meta:
+        model = Pagina
+        fields = ["slug", "titulo", "contenido", "publicada"]
+        widgets = {
+            "slug": forms.TextInput(attrs={"class": "form-control"}),
+            "titulo": forms.TextInput(attrs={"class": "form-control"}),
+            "contenido": forms.Textarea(attrs={"class": "form-control", "rows": 10}),
+            "publicada": forms.CheckboxInput(attrs={"class": "form-check-input"}),
         }
 
 

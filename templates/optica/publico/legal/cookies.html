@@ -2,5 +2,5 @@
 {% block title %}Política de cookies{% endblock %}
 {% block content %}
 <h1 class="h3">Política de cookies</h1>
-<p>Esta web usa cookies técnicas necesarias. No se usan cookies de seguimiento sin consentimiento.</p>
+{% if pagina %}<div>{{ pagina.contenido|linebreaks }}</div>{% else %}<p>Esta web usa cookies técnicas necesarias. No se usan cookies de seguimiento sin consentimiento.</p>{% endif %}
 {% endblock %}

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Usuarios{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Usuarios (solo superusuario)</h1>
+<form method="post" class="card p-3 mb-3">
+  {% csrf_token %}
+  <div class="row g-2">
+    <div class="col-md-3"><input name="username" class="form-control" placeholder="Usuario" required></div>
+    <div class="col-md-3"><input name="password" class="form-control" placeholder="Contraseña" required></div>
+    <div class="col-md-3"><input name="email" class="form-control" placeholder="Email"></div>
+    <div class="col-md-2">
+      <select name="rol" class="form-select">
+        <option value="gestor">Gestor</option>
+        <option value="admin">Admin</option>
+        <option value="recepcion">Recepción</option>
+        <option value="mecanico">Mecánico</option>
+      </select>
+    </div>
+    <div class="col-md-2">
+      <select name="organizacion" class="form-select">
+        {% for o in orgs %}<option value="{{ o.pk }}">{{ o.nombre }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2"><button class="btn btn-primary w-100">Crear</button></div>
+  </div>
+</form>
+<table class="table table-sm">
+  <thead><tr><th>Usuario</th><th>Email</th><th>Rol</th><th>Organización</th><th>Superuser</th></tr></thead>
+  <tbody>
+    {% for u in users %}
+    <tr>
+      <td>{{ u.username }}</td><td>{{ u.email }}</td>
+      <td>{% if u.perfil %}{{ u.perfil.rol }}{% else %}-{% endif %}</td>
+      <td>{% if u.perfil %}{{ u.perfil.organizacion }}{% else %}-{% endif %}</td>
+      <td>{% if u.is_superuser %}Sí{% else %}No{% endif %}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

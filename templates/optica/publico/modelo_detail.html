@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block title %}{{ modelo }}{% endblock %}
 {% block content %}
+<a href="{% url 'optica:catalogo' %}" class="btn btn-outline-secondary mb-3">← Volver al catálogo</a>
 <div class="row">
   <div class="col-md-6">
     <div id="galeria" class="carousel slide" data-bs-ride="carousel">

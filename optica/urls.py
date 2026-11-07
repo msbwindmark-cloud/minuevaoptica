@@ -6,6 +6,9 @@ app_name = "optica"
 urlpatterns = [
     # Públicas
     path("sw.js", views.service_worker, name="service_worker"),
+    path("manifest.webmanifest", views.manifest, name="manifest"),
+    path("health", views.health, name="health"),
+    path("health/", views.health, name="health_slash"),
     path("robots.txt", views.robots_txt, name="robots_txt"),
     path("", views.home, name="home"),
     path("catalogo/", views.catalogo, name="catalogo"),
@@ -30,12 +33,15 @@ urlpatterns = [
     path("contacto/", views.contacto, name="contacto"),
     path("contacto/ok/", views.contacto_ok, name="contacto_ok"),
     path("nosotros/", views.nosotros, name="nosotros"),
+    path("p/<slug:slug>/", views.pagina, name="pagina"),
     path("aviso-legal/", views.aviso_legal, name="aviso_legal"),
     path("privacidad/", views.privacidad, name="privacidad"),
     path("cookies/", views.cookies, name="cookies"),
 
     # Gestión
     path("gestion/login/", views.gestion_login, name="gestion_login"),
+    path("gestion/2fa/", views.gestion_2fa, name="gestion_2fa"),
+    path("gestion/2fa/setup/", views.gestion_2fa_setup, name="gestion_2fa_setup"),
     path("gestion/logout/", views.gestion_logout, name="gestion_logout"),
     path("gestion/", views.gestion_dashboard, name="gestion_dashboard"),
     path("gestion/modelos/", views.gestion_modelos, name="gestion_modelos"),
@@ -58,6 +64,9 @@ urlpatterns = [
     path("gestion/citas/<int:pk>/ics/", views.cita_ics, name="cita_ics"),
     path("gestion/ajustes/", views.gestion_ajustes, name="gestion_ajustes"),
     path("gestion/novedades/", views.gestion_novedades, name="gestion_novedades"),
+    path("gestion/paginas/", views.gestion_paginas, name="gestion_paginas"),
+    path("gestion/usuarios/", views.gestion_usuarios, name="gestion_usuarios"),
+    path("gestion/paginas/<int:pk>/editar/", views.gestion_pagina_editar, name="gestion_pagina_editar"),
     path("gestion/historial/", views.gestion_historial, name="gestion_historial"),
     path("gestion/recordatorios/", views.gestion_recordatorios, name="gestion_recordatorios"),
     path("gestion/estadisticas/", views.gestion_estadisticas, name="gestion_estadisticas"),

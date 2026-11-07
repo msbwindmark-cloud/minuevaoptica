@@ -16,7 +16,7 @@ class TenantMiddleware:
             # Sitio público de una sola óptica: usar la primera organización disponible
             try:
                 from .models import Organizacion
-                org = Organizacion.objects.order_by("id").first()
+                org = Organizacion.objects.order_by("-id").first()
             except Exception:
                 org = None
         request.perfil = perfil

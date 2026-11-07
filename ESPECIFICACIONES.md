@@ -3,6 +3,7 @@
 Documento reutilizable: **cada proyecto nuevo debe partir de estas especificaciones.**
 Vertical inicial: gestión de taller mecánico. Después: administradores de fincas (reutilizando `core`).
 
+
 ---
 
 ## 1. Objetivo
