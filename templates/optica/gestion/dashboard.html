@@ -13,16 +13,16 @@
   {% for c in ultimas_consultas %}<li class="list-group-item">{{ c.nombre }} - {{ c.fecha|date:"d/m H:i" }} {% if not c.leida %}<span class="badge bg-warning">nueva</span>{% endif %}</li>{% empty %}<li class="list-group-item">Sin consultas</li>{% endfor %}
 </ul>
 <nav class="mt-3">
-  <a class="btn btn-primary" href="{% url 'optica:gestion_modelos' %}">Modelos</a>
-  <a class="btn btn-outline-primary" href="{% url 'optica:gestion_consultas' %}">Consultas</a>
-  <a class="btn btn-outline-primary" href="{% url 'optica:gestion_citas' %}">Citas</a>
-  <a class="btn btn-outline-primary" href="{% url 'optica:gestion_ajustes' %}">Ajustes</a>
-  <a class="btn btn-outline-primary" href="{% url 'optica:gestion_opiniones' %}">Opiniones</a>
-  <a class="btn btn-outline-secondary" href="{% url 'optica:gestion_2fa_setup' %}">Activar 2FA</a>
-  <a class="btn btn-outline-primary" href="{% url 'optica:gestion_estadisticas' %}">Estadísticas</a>
-  <a class="btn btn-outline-primary" href="{% url 'optica:gestion_recordatorios' %}">Recordatorios</a>
-  <a class="btn btn-outline-primary" href="{% url 'optica:gestion_kiosco' %}">Modo tienda</a>
-  <a class="btn btn-outline-primary" href="{% url 'optica:gestion_paginas' %}">Páginas</a>
-  {% if user.is_superuser %}<a class="btn btn-outline-danger" href="{% url 'optica:gestion_usuarios' %}">Usuarios</a>{% endif %}
+  <a class="btn btn-primary" href="/gestion/modelos/">Modelos</a>
+  <a class="btn btn-outline-primary" href="/gestion/consultas/">Consultas</a>
+  <a class="btn btn-outline-primary" href="/gestion/citas/">Citas</a>
+  <a class="btn btn-outline-primary" href="/gestion/ajustes/">Ajustes</a>
+  <a class="btn btn-outline-primary" href="/gestion/opiniones/">Opiniones</a>
+  <a class="btn btn-outline-secondary" href="/gestion/2fa/setup/">Activar 2FA</a>
+  <a class="btn btn-outline-primary" href="/gestion/estadisticas/">Estadísticas</a>
+  <a class="btn btn-outline-primary" href="/gestion/recordatorios/">Recordatorios</a>
+  <a class="btn btn-outline-primary" href="/gestion/kiosco/">Modo tienda</a>
+  <a class="btn btn-outline-primary" href="/gestion/paginas/">Páginas</a>
+  {% if user.is_superuser %}<a class="btn btn-outline-danger" href="/gestion/usuarios/">Usuarios</a>{% endif %}
 </nav>
 {% endblock %}

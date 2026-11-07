@@ -696,19 +696,51 @@ Mensaje:
 
 
 def _enviar_correo_cita(org, cita):
-    from django.core.mail import send_mail
+    from django.core.mail import EmailMessage
     from django.conf import settings
+    from datetime import timedelta
     ajustes = Ajustes.for_org(org) if org else None
+    destinatarios_optica = [ajustes.email] if ajustes and ajustes.email else [settings.DEFAULT_FROM_EMAIL]
+    # .ics
+    dt = cita.fecha_hora
+    dtend = dt + timedelta(hours=1)
+    ics = "\r\n".join([
+        "BEGIN:VCALENDAR", "VERSION:2.0",
+        "PRODID:-//Optica Espartinas//Cita//ES",
+        "BEGIN:VEVENT",
+        f"UID:cita-{cita.pk}@optica",
+        f"DTSTAMP:{dt.strftime('%Y%m%dT%H%M%SZ')}",
+        f"DTSTART:{dt.strftime('%Y%m%dT%H%M%SZ')}",
+        f"DTEND:{dtend.strftime('%Y%m%dT%H%M%SZ')}",
+        f"SUMMARY:Cita optica - {cita.nombre}",
+        f"DESCRIPTION:{cita.get_motivo_display()} - {cita.notas}",
+        "END:VEVENT", "END:VCALENDAR",
+    ])
+    # correo a la óptica
     try:
-        send_mail(
+        msg = EmailMessage(
             subject=f"Nueva cita solicitada - {cita.nombre}",
-            message=f"{cita.nombre} solicita cita el {cita.fecha_hora} ({cita.get_motivo_display()}). Tel: {cita.telefono}",
+            body=f"{cita.nombre} solicita cita el {cita.fecha_hora} ({cita.get_motivo_display()}). Tel: {cita.telefono}\nEmail: {cita.email}",
             from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[ajustes.email] if ajustes and ajustes.email else [settings.DEFAULT_FROM_EMAIL],
-            fail_silently=True,
+            to=destinatarios_optica,
         )
+        msg.attach(f"cita-{cita.pk}.ics", ics, "text/calendar")
+        msg.send(fail_silently=True)
     except Exception:
         pass
+    # correo al cliente
+    if cita.email:
+        try:
+            msg2 = EmailMessage(
+                subject="Tu cita ha sido recibida",
+                body=f"Hola {cita.nombre},\n\nHemos recibido tu solicitud de cita para el {cita.fecha_hora} ({cita.get_motivo_display()}). Te confirmaremos en breve.\n\nÓptica Espartinas",
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                to=[cita.email],
+            )
+            msg2.attach(f"cita-{cita.pk}.ics", ics, "text/calendar")
+            msg2.send(fail_silently=True)
+        except Exception:
+            pass
 
 
 # ---------- Gestión ----------
