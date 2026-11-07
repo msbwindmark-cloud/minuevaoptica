@@ -120,11 +120,14 @@ async function activarAvisos() {
   let sub = await reg.pushManager.getSubscription();
   if (!sub) {
     sub = await reg.pushManager.subscribe({userVisibleOnly: true, applicationServerKey: urlB64ToUint8Array(j.publicKey)});
-    await fetch('/api/push/suscribir/', {method:'POST', headers:{'Content-Type':'application/json','X-CSRFToken':getCookie('csrftoken')}, body:JSON.stringify(sub)});
-    Swal.fire('Activado', 'Recibirás avisos', 'success');
+    const rs = await fetch('/api/push/suscribir/', {method:'POST', headers:{'Content-Type':'application/json','X-CSRFToken':getCookie('csrftoken')}, body:JSON.stringify(sub)});
+    if (!rs.ok) { Swal.fire('No se pudo activar', 'Inicia sesión en Gestión para recibir avisos', 'warning'); return; }
+    Swal.fire('Activado', 'Recibirás un aviso cuando entre una cita o consulta nueva', 'success');
   } else {
-    await fetch('/api/push/probar/', {method:'POST', headers:{'X-CSRFToken':getCookie('csrftoken')}});
-    Swal.fire('Ya activado', 'Enviado aviso de prueba', 'success');
+    const rp = await fetch('/api/push/probar/', {method:'POST', headers:{'X-CSRFToken':getCookie('csrftoken')}});
+    const jp = await rp.json().catch(() => ({}));
+    if (jp.enviados > 0) Swal.fire('Ya activado', 'Te hemos enviado un aviso de prueba', 'success');
+    else Swal.fire('Aviso no enviado', 'El navegador está suscrito pero el envío falló. Revisa las claves VAPID o vuelve a activarlo.', 'warning');
   }
 }
 

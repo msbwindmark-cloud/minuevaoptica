@@ -57,7 +57,9 @@
         <li class="nav-item"><button class="btn btn-sm btn-outline-light ms-2" onclick="toggleDark()" aria-label="Modo oscuro"><i class="bi bi-moon"></i></button></li>
         <li class="nav-item"><button class="btn btn-sm btn-outline-light ms-2" onclick="document.body.classList.toggle('alto-contraste');localStorage.setItem('hc',document.body.classList.contains('alto-contraste'))" aria-label="Alto contraste">◐</button></li>
         <li class="nav-item"><button class="btn btn-sm btn-outline-light ms-2" onclick="document.body.classList.toggle('texto-grande');localStorage.setItem('tg',document.body.classList.contains('texto-grande'))" aria-label="Texto grande">A+</button></li>
-        <li class="nav-item"><button class="btn btn-sm btn-outline-warning ms-2" onclick="activarAvisos()" aria-label="Activar avisos">🔔</button></li>
+        {% if user.is_authenticated and perfil and perfil.es_gestor or user.is_superuser %}
+        <li class="nav-item"><button class="btn btn-sm btn-outline-warning ms-2" onclick="activarAvisos()" title="Recibir avisos de nuevas citas y consultas" aria-label="Activar avisos de citas y consultas">🔔</button></li>
+        {% endif %}
         {% if user.is_authenticated %}
           {% if user.is_superuser %}
             <li class="nav-item"><a class="nav-link" href="/admin/" target="_blank">Admin</a></li>
