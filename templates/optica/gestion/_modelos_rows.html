@@ -1,0 +1,26 @@
+<table class="table table-sm align-middle">
+  <thead><tr><th>Nombre</th><th>Marca</th><th>Visible</th><th></th></tr></thead>
+  <tbody>
+    {% for m in page.object_list %}
+    <tr>
+      <td>{{ m.marca }} {{ m.nombre }}</td>
+      <td>{{ m.marca }}</td>
+      <td>
+        <form method="post" action="{% url 'optica:gestion_modelo_toggle' m.pk %}" style="display:inline">{% csrf_token %}<input type="hidden" name="field" value="visible"><button class="btn btn-sm {% if m.visible %}btn-success{% else %}btn-secondary{% endif %}">{% if m.visible %}Sí{% else %}No{% endif %}</button></form>
+      </td>
+      <td class="text-end">
+        <a class="btn btn-sm btn-outline-primary" href="{% url 'optica:gestion_modelo_editar' m.pk %}">Editar</a>
+        <a class="btn btn-sm btn-outline-info" href="{% url 'optica:gestion_modelo_duplicar' m.pk %}">Duplicar</a>
+        <a class="btn btn-sm btn-outline-secondary" href="{% url 'optica:gestion_fotos' m.pk %}">Fotos</a>
+        <a class="btn btn-sm btn-outline-dark" href="{% url 'optica:gestion_qr' m.pk %}">QR</a>
+        <form method="post" action="{% url 'optica:gestion_modelo_borrar' m.pk %}" style="display:inline" onsubmit="return confirm('¿Borrar?')">{% csrf_token %}<button class="btn btn-sm btn-outline-danger">Borrar</button></form>
+      </td>
+    </tr>
+    {% empty %}<tr><td colspan="4" class="text-muted">Sin modelos.</td></tr>{% endfor %}
+  </tbody>
+</table>
+<nav><ul class="pagination pagination-sm">
+  {% if page.has_previous %}<li class="page-item"><a class="page-link" href="?page={{ page.previous_page_number }}">Anterior</a></li>{% endif %}
+  <li class="page-item disabled"><span class="page-link">{{ page.number }}/{{ page.paginator.num_pages }}</span></li>
+  {% if page.has_next %}<li class="page-item"><a class="page-link" href="?page={{ page.next_page_number }}">Siguiente</a></li>{% endif %}
+</ul></nav>

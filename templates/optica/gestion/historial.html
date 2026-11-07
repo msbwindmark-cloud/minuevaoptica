@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Historial{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Historial de actividad</h1>
+<table class="table table-sm">
+  <thead><tr><th>Fecha</th><th>Usuario</th><th>Acción</th><th>Objeto</th></tr></thead>
+  <tbody>
+    {% for a in auditorias %}<tr><td>{{ a.fecha|date:"d/m H:i" }}</td><td>{{ a.usuario_nombre }}</td><td>{{ a.get_accion_display }}</td><td>{{ a.objeto_repr }}</td></tr>{% empty %}<tr><td colspan="4">Sin registros</td></tr>{% endfor %}
+  </tbody>
+</table>
+{% endblock %}

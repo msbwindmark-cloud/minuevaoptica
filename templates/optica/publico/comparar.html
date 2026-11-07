@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Comparar{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Comparador</h1>
+<div class="table-responsive">
+  <table class="table table-bordered">
+    <thead><tr><th></th>{% for m in modelos %}<th>{{ m.marca }} {{ m.nombre }}</th>{% endfor %}</tr></thead>
+    <tbody>
+      <tr><th>Foto</th>{% for m in modelos %}<td>{% with f=m.foto_portada %}{% if f %}<img src="{{ f.imagen.url }}" style="max-height:120px">{% endif %}{% endwith %}</td>{% endfor %}</tr>
+      <tr><th>Material</th>{% for m in modelos %}<td>{{ m.get_material_display }}</td>{% endfor %}</tr>
+      <tr><th>Forma</th>{% for m in modelos %}<td>{{ m.get_forma_display }}</td>{% endfor %}</tr>
+      <tr><th>Color</th>{% for m in modelos %}<td>{{ m.color }}</td>{% endfor %}</tr>
+      <tr><th>Precio</th>{% for m in modelos %}<td>{{ m.precio_display }}</td>{% endfor %}</tr>
+    </tbody>
+  </table>
+</div>
+{% endblock %}

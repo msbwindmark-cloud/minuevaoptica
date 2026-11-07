@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Solicitar cita{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Solicitar cita</h1>
+<form method="post" class="card p-3">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button class="btn btn-primary">Enviar</button>
+</form>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Contacto{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Contacto</h1>
+<div class="row">
+  <div class="col-md-6">
+    <form method="post" class="card p-3">
+      {% csrf_token %}
+  
+      {{ form.as_p }}
+      <button class="btn btn-primary">Enviar</button>
+    </form>
+  </div>
+  <div class="col-md-6">
+    {% if ajustes %}
+    <p><strong>Dirección:</strong> {{ ajustes.direccion }}</p>
+    <p><strong>Teléfono:</strong> {{ ajustes.telefono }}</p>
+    <p><strong>Email:</strong> {{ ajustes.email }}</p>
+    <p><strong>Horario:</strong><br>{{ ajustes.horario|linebreaks }}</p>
+    {% if ajustes.google_maps_url %}<a href="{{ ajustes.google_maps_url }}" class="btn btn-outline-secondary" target="_blank">Cómo llegar</a>{% endif %}
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

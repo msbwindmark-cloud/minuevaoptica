@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}{{ entrada.titulo }}{% endblock %}
+{% block content %}
+<article>
+  <h1 class="h3">{{ entrada.titulo }}</h1>
+  <p class="text-muted">{{ entrada.fecha|date:"d/m/Y" }}</p>
+  {% if entrada.imagen %}<img src="{{ entrada.imagen.url }}" class="img-fluid mb-3" alt="{{ entrada.titulo }}">{% endif %}
+  <div>{{ entrada.texto|linebreaks }}</div>
+</article>
+{% endblock %}

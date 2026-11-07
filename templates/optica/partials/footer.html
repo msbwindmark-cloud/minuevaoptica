@@ -1,0 +1,18 @@
+<footer class="bg-light border-top mt-5 py-4">
+  <div class="container small text-muted">
+    <div class="row">
+      <div class="col-md-4">
+        <strong>{% if organizacion %}{{ organizacion.nombre }}{% endif %}</strong><br>
+        {% if ajustes %}{{ ajustes.direccion }}<br>{{ ajustes.telefono }}{% endif %}
+      </div>
+      <div class="col-md-4">
+        <a href="{% url 'optica:aviso_legal' %}">Aviso legal</a> ·
+        <a href="{% url 'optica:privacidad' %}">Privacidad</a> ·
+        <a href="{% url 'optica:cookies' %}">Cookies</a>
+      </div>
+      <div class="col-md-4 text-md-end">
+        © {% now "Y" %} Todos los derechos reservados.
+      </div>
+    </div>
+  </div>
+</footer>

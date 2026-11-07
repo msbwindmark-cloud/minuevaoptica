@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}{{ modelo }}{% endblock %}
+{% block content %}
+<div class="row">
+  <div class="col-md-6">
+    <div id="galeria" class="carousel slide" data-bs-ride="carousel">
+      <div class="carousel-inner">
+        {% for f in modelo.fotos.all %}
+        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+          <img src="{{ f.imagen.url }}" class="d-block w-100 lb-trigger" alt="{{ f.alt|default:modelo.nombre }}" data-index="{{ forloop.counter0 }}" style="cursor:zoom-in">
+        </div>
+        {% empty %}
+        {% with fp=modelo.foto_portada %}{% if fp %}<div class="carousel-item active"><img src="{{ fp.imagen.url }}" class="d-block w-100 lb-trigger" alt="{{ modelo.nombre }}" data-index="0" style="cursor:zoom-in"></div>{% endif %}{% endwith %}
+        {% endfor %}
+      </div>
+      {% if modelo.fotos.count > 1 %}
+      <button class="carousel-control-prev" type="button" data-bs-target="#galeria" data-bs-slide="prev"><span class="carousel-control-prev-icon"></span></button>
+      <button class="carousel-control-next" type="button" data-bs-target="#galeria" data-bs-slide="next"><span class="carousel-control-next-icon"></span></button>
+      {% endif %}
+    </div>
+  </div>
+  <div class="col-md-6">
+    <h1>{{ modelo.marca }} {{ modelo.nombre }}</h1>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "{{ modelo.marca }} {{ modelo.nombre }}",
+  "description": "{{ modelo.descripcion_larga|default:modelo.descripcion_corta }}",
+  "brand": {"@type":"Brand","name":"{{ modelo.marca }}"},
+  "image": "{% if modelo.foto_portada %}{{ modelo.foto_portada.imagen.url }}{% endif %}"
+}
+</script>
+    <p class="text-muted">{{ modelo.categoria }}</p>
+    <p>{{ modelo.descripcion_larga|default:modelo.descripcion_corta }}</p>
+    <ul class="list-unstyled">
+      {% if modelo.material %}<li><strong>Material:</strong> {{ modelo.get_material_display }}</li>{% endif %}
+      {% if modelo.forma %}<li><strong>Forma:</strong> {{ modelo.get_forma_display }}</li>{% endif %}
+      {% if modelo.color %}<li><strong>Color:</strong> {{ modelo.color }}</li>{% endif %}
+      {% if modelo.ancho_lente %}<li><strong>Ancho lente:</strong> {{ modelo.ancho_lente }} mm</li>{% endif %}
+      {% if modelo.puente %}<li><strong>Puente:</strong> {{ modelo.puente }} mm</li>{% endif %}
+      {% if modelo.varilla %}<li><strong>Varilla:</strong> {{ modelo.varilla }} mm</li>{% endif %}
+    </ul>
+    <p class="h5">{{ modelo.precio_display }}</p>
+    <div class="d-grid gap-2">
+      <a class="btn btn-success" href="https://wa.me/{{ ajustes.whatsapp }}?text={{ modelo.marca }}%20{{ modelo.nombre }}" target="_blank">Consultar por WhatsApp</a>
+      <a class="btn btn-primary" href="{% url 'optica:citas' %}">Pedir cita</a>
+      <button class="btn btn-outline-secondary" onclick="toggleFavorito({{ modelo.id }}, '{{ modelo.marca }} {{ modelo.nombre }}')">Guardar en favoritos</button>
+    </div>
+  </div>
+</div>
+{% if relacionados %}
+<h2 class="h4 mt-4">Relacionados</h2>
+<div class="row g-3">
+  {% for m in relacionados %}
+  <div class="col-6 col-md-3">
+    <div class="card card-modelo h-100">
+      {% with f=m.foto_portada %}{% if f %}<img src="{{ f.imagen.url }}" class="card-img-top modelo-img" alt="{{ m.nombre }}" loading="lazy">{% endif %}{% endwith %}
+      <div class="card-body"><h3 class="h6">{{ m.marca }} {{ m.nombre }}</h3></div>
+      <a href="{% url 'optica:modelo_detail' m.slug %}" class="stretched-link"></a>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<!-- Lightbox -->
+<div id="lb" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.9); z-index:2000; align-items:center; justify-content:center;">
+  <button onclick="lbClose()" style="position:absolute; top:1rem; right:1rem;" class="btn btn-light">✕</button>
+  <button onclick="lbPrev()" style="position:absolute; left:1rem; top:50%;" class="btn btn-light">‹</button>
+  <img id="lbImg" src="" alt="" style="max-width:90%; max-height:90%; transition:transform .2s; cursor:zoom-in;">
+  <button onclick="lbNext()" style="position:absolute; right:1rem; top:50%;" class="btn btn-light">›</button>
+</div>
+<script>
+const LB_IMGS = [{% for f in modelo.fotos.all %}"{{ f.imagen.url }}"{% if not forloop.last %},{% endif %}{% empty %}{% with fp=modelo.foto_portada %}{% if fp %}"{{ fp.imagen.url }}"{% endif %}{% endwith %}{% endfor %}];
+let lbIndex = 0, lbZoom = 1;
+function lbOpen(i){ lbIndex=i; lbZoom=1; document.getElementById('lbImg').src=LB_IMGS[i]; document.getElementById('lbImg').style.transform='scale(1)'; document.getElementById('lb').style.display='flex'; }
+function lbClose(){ document.getElementById('lb').style.display='none'; }
+function lbPrev(){ if(!LB_IMGS.length) return; lbIndex=(lbIndex-1+LB_IMGS.length)%LB_IMGS.length; lbOpen(lbIndex); }
+function lbNext(){ if(!LB_IMGS.length) return; lbIndex=(lbIndex+1)%LB_IMGS.length; lbOpen(lbIndex); }
+document.addEventListener('click', e => {
+  if (e.target.classList.contains('lb-trigger')) lbOpen(parseInt(e.target.dataset.index||0));
+});
+const lbImg = document.getElementById('lbImg');
+lbImg.addEventListener('click', () => { lbZoom = lbZoom===1?2:1; lbImg.style.transform='scale('+lbZoom+')'; });
+lbImg.addEventListener('wheel', e => { e.preventDefault(); lbZoom = Math.min(4, Math.max(1, lbZoom + (e.deltaY<0?0.25:-0.25))); lbImg.style.transform='scale('+lbZoom+')'; });
+document.addEventListener('keydown', e => { if(e.key==='Escape') lbClose(); if(e.key==='ArrowLeft') lbPrev(); if(e.key==='ArrowRight') lbNext(); });
+</script>
+{% endblock %}

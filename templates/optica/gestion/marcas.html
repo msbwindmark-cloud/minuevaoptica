@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Marcas{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Marcas</h1>
+<form method="post" enctype="multipart/form-data" class="card p-3 mb-3">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button class="btn btn-primary">Añadir</button>
+</form>
+<ul class="list-group">
+  {% for m in marcas %}<li class="list-group-item d-flex justify-content-between"><span>{% if m.logo %}<img src="{{ m.logo.url }}" style="height:24px" class="me-2">{% endif %}{{ m.nombre }}</span>
+    <form method="post" action="{% url 'optica:gestion_marca_borrar' m.pk %}">{% csrf_token %}<button class="btn btn-sm btn-outline-danger">Borrar</button></form></li>{% empty %}<li class="list-group-item">Sin marcas</li>{% endfor %}
+</ul>
+{% endblock %}

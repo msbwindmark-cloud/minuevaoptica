@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ ajustes.nombre_comercial|default:"Óptica" }}{% endblock %}
+{% block content %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Optician",
+  "name": "{{ ajustes.nombre_comercial|default:'Óptica' }}",
+  "address": "{{ ajustes.direccion }}",
+  "telephone": "{{ ajustes.telefono }}",
+  "url": "{{ request.build_absolute_uri }}"
+}
+</script>
+<section class="py-5 text-center">
+  <h1 class="display-5 fw-bold">{{ ajustes.texto_portada|default:"Bienvenido a nuestra óptica" }}</h1>
+  <p class="lead">Descubre nuestras monturas y servicios.</p>
+  <span class="badge {% if abierto.abierto %}bg-success{% else %}bg-secondary{% endif %} fs-6">{{ abierto.texto }}</span>
+  <a href="{% url 'optica:catalogo' %}" class="btn btn-primary btn-lg">Ver catálogo</a>
+  <a href="https://wa.me/{{ ajustes.whatsapp }}" class="btn btn-success btn-lg ms-2">WhatsApp</a>
+</section>
+{% if destacados %}
+<h2 class="h4 mb-3">Destacados</h2>
+<div class="row g-3">
+  {% for m in destacados %}
+  <div class="col-6 col-md-3">
+    <div class="card card-modelo h-100">
+      {% with f=m.foto_portada %}{% if f %}<img src="{{ f.imagen.url }}" class="card-img-top modelo-img" alt="{{ m.nombre }}">{% endif %}{% endwith %}
+      <div class="card-body">
+        <h3 class="h6">{{ m.marca }} {{ m.nombre }}</h3>
+        <p class="small text-muted mb-1">{{ m.precio_display }}</p>
+        <a href="{% url 'optica:modelo_detail' m.slug %}" class="stretched-link"></a>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+{% if novedades %}
+<h2 class="h4 mt-4 mb-3">Novedades</h2>
+<div class="row g-3">
+  {% for m in novedades %}
+  <div class="col-6 col-md-3">
+    <div class="card card-modelo h-100">
+      {% with f=m.foto_portada %}{% if f %}<img src="{{ f.imagen.url }}" class="card-img-top modelo-img" alt="{{ m.nombre }}">{% endif %}{% endwith %}
+      <div class="card-body">
+        <h3 class="h6">{{ m.marca }} {{ m.nombre }}</h3>
+        <span class="badge bg-info">Nuevo</span>
+      </div>
+      <a href="{% url 'optica:modelo_detail' m.slug %}" class="stretched-link"></a>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

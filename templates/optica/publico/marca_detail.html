@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}{{ marca.nombre }}{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">{{ marca.nombre }}</h1>
+<div class="row g-3">
+  {% for m in modelos %}
+  <div class="col-6 col-md-3">
+    <div class="card card-modelo h-100">
+      {% with f=m.foto_portada %}{% if f %}<img src="{{ f.imagen.url }}" class="card-img-top modelo-img" alt="{{ m.nombre }}" loading="lazy">{% endif %}{% endwith %}
+      <div class="card-body"><h3 class="h6">{{ m.nombre }}</h3><p class="small text-muted">{{ m.precio_display }}</p></div>
+      <a href="{% url 'optica:modelo_detail' m.slug %}" class="stretched-link"></a>
+    </div>
+  </div>
+  {% empty %}<p class="text-muted">Sin modelos.</p>{% endfor %}
+</div>
+{% endblock %}

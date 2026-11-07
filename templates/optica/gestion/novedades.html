@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Novedades{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Novedades</h1>
+<form method="post" enctype="multipart/form-data" class="card p-3 mb-3">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button class="btn btn-primary">Publicar</button>
+</form>
+<ul class="list-group">
+  {% for e in entradas %}<li class="list-group-item">{{ e.titulo }} {% if e.publicada %}<span class="badge bg-success">publicada</span>{% endif %}</li>{% empty %}<li class="list-group-item">Sin entradas</li>{% endfor %}
+</ul>
+{% endblock %}

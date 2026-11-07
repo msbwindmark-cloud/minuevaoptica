@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Acceso gestión{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-4">
+    <div class="card p-3">
+      <h1 class="h4">Acceso gestión</h1>
+      <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="form-check mb-2">
+          <input class="form-check-input" type="checkbox" name="remember" id="remember">
+          <label class="form-check-label" for="remember">Recordarme</label>
+        </div>
+        <button class="btn btn-primary w-100">Entrar</button>
+      </form>
+      {% if error %}<div class="alert alert-danger mt-2">{{ error }}</div>{% endif %}
+      <p class="small mt-2"><a href="/admin/password_reset/">¿Olvidaste la contraseña?</a></p>
+    </div>
+  </div>
+</div>
+{% endblock %}

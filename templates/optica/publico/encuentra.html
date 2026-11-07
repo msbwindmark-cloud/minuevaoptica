@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Encuentra tu montura{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Encuentra tu montura</h1>
+<form id="quiz" class="mb-4">
+  <div class="mb-3">
+    <label class="form-label">Forma de tu cara</label>
+    <select name="cara" class="form-select">
+      <option value="redonda">Redonda</option>
+      <option value="cuadrada">Cuadrada</option>
+      <option value="ovalada">Ovalada</option>
+      <option value="corazon">Corazón</option>
+    </select>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Estilo</label>
+    <select name="estilo" class="form-select">
+      <option value="clasico">Clásico</option>
+      <option value="moderno">Moderno</option>
+    </select>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Género</label>
+    <select name="genero" class="form-select">
+      <option value="mujer">Mujer</option>
+      <option value="hombre">Hombre</option>
+      <option value="unisex">Unisex</option>
+    </select>
+  </div>
+  <button class="btn btn-primary" type="submit">Recomendar</button>
+</form>
+<div id="resultados" class="row g-3"></div>
+<script>
+document.getElementById('quiz').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  const data = Object.fromEntries(fd.entries());
+  const res = await fetch('{% url "optica:recomendar" %}', {method:'POST', headers:{'Content-Type':'application/json','X-CSRFToken':getCookie('csrftoken')}, body:JSON.stringify(data)});
+  const json = await res.json();
+  const cont = document.getElementById('resultados');
+  cont.innerHTML = '';
+  (json.items||[]).forEach(it => {
+    cont.innerHTML += `<div class="col-6 col-md-3"><div class="card h-100"><img src="${it.foto}" class="card-img-top modelo-img" alt="${it.nombre}"><div class="card-body"><h3 class="h6">${it.nombre}</h3><p class="small">${it.precio}</p><a href="${it.url}" class="stretched-link"></a></div></div></div>`;
+  });
+});
+</script>
+{% endblock %}

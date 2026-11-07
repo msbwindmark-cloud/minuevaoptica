@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Añadir gafa en 30 segundos{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Añadir gafa rápido</h1>
+<form method="post" enctype="multipart/form-data" class="card p-3">
+  {% csrf_token %}
+  <div class="mb-2">
+    <label class="form-label">Marca</label>
+    <select name="marca" class="form-select" required>
+      {% for m in marcas %}<option value="{{ m.pk }}">{{ m.nombre }}</option>{% endfor %}
+    </select>
+  </div>
+  <div class="mb-2">
+    <label class="form-label">Categoría</label>
+    <select name="categoria" class="form-select" required>
+      {% for c in categorias %}<option value="{{ c.pk }}">{{ c.nombre }}</option>{% endfor %}
+    </select>
+  </div>
+  <div class="mb-2">
+    <label class="form-label">Nombre</label>
+    <input name="nombre" class="form-control" required placeholder="Ej. Aviator Classic">
+  </div>
+  <div class="mb-2">
+    <label class="form-label">Foto (cámara)</label>
+    <input type="file" name="foto" class="form-control" accept="image/*" capture="environment">
+  </div>
+  <div class="mb-2">
+    <label class="form-label">Descripción corta</label>
+    <input name="descripcion_corta" class="form-control">
+  </div>
+  <button class="btn btn-primary">Crear y editar detalles</button>
+  <a class="btn btn-outline-secondary" href="{% url 'optica:gestion_modelos' %}">Cancelar</a>
+</form>
+{% endblock %}

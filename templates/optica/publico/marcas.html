@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Marcas{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Marcas</h1>
+<div class="row g-3">
+  {% for m in marcas %}
+  <div class="col-6 col-md-3">
+    <a href="{% url 'optica:marca_detail' m.slug %}" class="text-decoration-none">
+      <div class="card h-100 text-center p-3">
+        {% if m.logo %}<img src="{{ m.logo.url }}" alt="{{ m.nombre }}" class="img-fluid mb-2" style="max-height:80px">{% endif %}
+        <h3 class="h6 mb-0">{{ m.nombre }}</h3>
+      </div>
+    </a>
+  </div>
+  {% empty %}<p class="text-muted">Sin marcas.</p>{% endfor %}
+</div>
+{% endblock %}

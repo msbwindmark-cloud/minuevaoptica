@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Probador virtual{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Probador virtual</h1>
+<p class="text-muted">Activa la cámara y elige una montura. La imagen se superpone.</p>
+<select id="modeloSelect" class="form-select mb-3">
+  {% for m in modelos %}
+  <option value="{{ m.foto_probador.url|default_if_none:m.foto_portada.imagen.url }}" data-nombre="{{ m.marca }} {{ m.nombre }}">{{ m.marca }} {{ m.nombre }}</option>
+  {% endfor %}
+</select>
+<div style="position:relative; width:100%; max-width:480px; margin:auto;">
+  <video id="video" autoplay playsinline style="width:100%; border-radius:12px;"></video>
+  <img id="overlay" src="" alt="gafas" style="position:absolute; top:35%; left:10%; width:80%; pointer-events:none; opacity:0.9;">
+</div>
+<button class="btn btn-primary mt-3" onclick="startCam()">Activar cámara</button>
+<script>
+async function startCam() {
+  const stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'}});
+  document.getElementById('video').srcObject = stream;
+}
+const sel = document.getElementById('modeloSelect');
+function updateOverlay(){ document.getElementById('overlay').src = sel.value; }
+sel.addEventListener('change', updateOverlay);
+updateOverlay();
+</script>
+{% endblock %}

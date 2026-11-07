@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Página no encontrada{% endblock %}
+{% block content %}
+<div class="text-center py-5">
+  <h1 class="display-1">404</h1>
+  <p class="lead">Esta página no existe. Pero nuestras gafas sí.</p>
+  <a href="{% url 'optica:catalogo' %}" class="btn btn-primary">Ir al catálogo</a>
+</div>
+{% endblock %}

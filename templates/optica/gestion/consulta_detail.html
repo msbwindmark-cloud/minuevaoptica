@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Consulta{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Consulta de {{ consulta.nombre }}</h1>
+<p><strong>Tel:</strong> {{ consulta.telefono }}</p>
+<p><strong>Email:</strong> {{ consulta.email }}</p>
+<p><strong>Modelo:</strong> {{ consulta.modelo }}</p>
+<p>{{ consulta.mensaje|linebreaks }}</p>
+<form method="post">{% csrf_token %}<button class="btn btn-success">Marcar leída</button></form>
+<a class="btn btn-outline-success mt-2" href="https://wa.me/{{ consulta.telefono }}">Responder por WhatsApp</a>
+{% endblock %}

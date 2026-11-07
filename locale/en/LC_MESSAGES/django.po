@@ -1,0 +1,28 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: en\n"
+
+msgid "Catálogo"
+msgstr "Catalog"
+
+msgid "Marcas"
+msgstr "Brands"
+
+msgid "Encuentra tu montura"
+msgstr "Find your frame"
+
+msgid "Probador"
+msgstr "Virtual try-on"
+
+msgid "Citas"
+msgstr "Appointments"
+
+msgid "Novedades"
+msgstr "News"
+
+msgid "Contacto"
+msgstr "Contact"
+
+msgid "Nosotros"
+msgstr "About us"

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Novedades{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Novedades</h1>
+<div class="row g-3">
+  {% for e in entradas %}
+  <div class="col-md-4">
+    <div class="card h-100">
+      {% if e.imagen %}<img src="{{ e.imagen.url }}" class="card-img-top modelo-img" alt="{{ e.titulo }}" loading="lazy">{% endif %}
+      <div class="card-body">
+        <h3 class="h5">{{ e.titulo }}</h3>
+        <p class="small text-muted">{{ e.fecha|date:"d/m/Y" }}</p>
+        <p>{{ e.texto|truncatewords:30 }}</p>
+        <a href="{% url 'optica:entrada_detail' e.slug %}" class="stretched-link"></a>
+      </div>
+    </div>
+  </div>
+  {% empty %}<p class="text-muted">Sin novedades.</p>{% endfor %}
+</div>
+{% endblock %}

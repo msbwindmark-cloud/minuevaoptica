@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Categorías{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Categorías</h1>
+<form method="post" class="card p-3 mb-3">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button class="btn btn-primary">Añadir</button>
+</form>
+<ul class="list-group">
+  {% for c in categorias %}<li class="list-group-item d-flex justify-content-between">{{ c.nombre }}
+    <form method="post" action="{% url 'optica:gestion_categoria_borrar' c.pk %}">{% csrf_token %}<button class="btn btn-sm btn-outline-danger">Borrar</button></form></li>{% empty %}<li class="list-group-item">Sin categorías</li>{% endfor %}
+</ul>
+{% endblock %}

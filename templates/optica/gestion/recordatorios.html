@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Recordatorios{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Recordatorios de revisión</h1>
+<table class="table table-sm">
+  <thead><tr><th>Nombre</th><th>Email</th><th>Última revisión</th><th>Enviado</th></tr></thead>
+  <tbody>
+    {% for r in items %}<tr><td>{{ r.nombre }}</td><td>{{ r.email }}</td><td>{{ r.fecha_ultima_revision }}</td><td>{% if r.enviado %}Sí{% else %}No{% endif %}</td></tr>{% empty %}<tr><td colspan="4">Sin registros</td></tr>{% endfor %}
+  </tbody>
+</table>
+{% endblock %}

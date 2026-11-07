@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Fotos{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Fotos de {{ modelo }}</h1>
+<form method="post" enctype="multipart/form-data" class="mb-3">
+  {% csrf_token %}
+  <input type="file" name="imagen" class="form-control mb-2" accept="image/*" capture="environment">
+  <button class="btn btn-primary">Subir</button>
+</form>
+<div class="row g-2">
+  {% for f in fotos %}
+  <div class="col-4 col-md-2">
+    <img src="{{ f.imagen.url }}" class="img-fluid rounded">
+    <form method="post" action="{% url 'optica:gestion_foto_borrar' f.pk %}">{% csrf_token %}<button class="btn btn-sm btn-outline-danger mt-1">Borrar</button></form>
+  </div>
+  {% empty %}<p class="text-muted">Sin fotos.</p>{% endfor %}
+</div>
+{% endblock %}

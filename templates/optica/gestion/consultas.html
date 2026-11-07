@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Consultas{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Consultas</h1>
+<a class="btn btn-outline-primary mb-2" href="?solo=sinleer">Solo sin leer</a>
+<ul class="list-group">
+  {% for c in consultas %}
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+    <span>{{ c.nombre }} · {{ c.telefono }} · {{ c.fecha|date:"d/m H:i" }} {% if not c.leida %}<span class="badge bg-warning">nueva</span>{% endif %}</span>
+    <a class="btn btn-sm btn-outline-secondary" href="{% url 'optica:gestion_consulta_detalle' c.pk %}">Ver</a>
+  </li>
+  {% empty %}<li class="list-group-item">Sin consultas</li>{% endfor %}
+</ul>
+{% endblock %}

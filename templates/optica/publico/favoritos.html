@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Mis favoritos{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Mis favoritos</h1>
+<p class="text-muted">Guardados en tu navegador. Envía tu selección a la óptica por WhatsApp.</p>
+<button class="btn btn-success mb-3" onclick="enviarSeleccionWhatsapp('{{ ajustes.whatsapp }}')">Enviar selección por WhatsApp</button>
+<div id="fav-list" class="row g-3"></div>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const ids = getFavoritos();
+  const cont = document.getElementById('fav-list');
+  if (!ids.length) { cont.innerHTML = '<p class="text-muted">Sin favoritos.</p>'; return; }
+  ids.forEach(id => {
+    cont.innerHTML += `<div class="col-6 col-md-3"><div class="card h-100"><div class="card-body">Modelo #${id}</div></div></div>`;
+  });
+});
+</script>
+{% endblock %}

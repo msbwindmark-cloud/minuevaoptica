@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Recordatorio de revisión{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Recordatorio de revisión anual</h1>
+<p>Deja tus datos y te avisaremos cuando toque revisar tu vista (con tu consentimiento).</p>
+<form method="post" class="card p-3">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button class="btn btn-primary">Apuntarme</button>
+</form>
+{% endblock %}

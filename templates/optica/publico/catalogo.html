@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Catálogo{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Catálogo</h1>
+<form method="get" class="row g-2 mb-3" id="filtros">
+  <div class="col-12 col-md-3">
+    <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Buscar">
+  </div>
+  <div class="col-6 col-md-2">
+    <select name="marca" class="form-select">
+      <option value="">Marca</option>
+      {% for m in marcas %}<option value="{{ m.slug }}" {% if filtros.marca == m.slug %}selected{% endif %}>{{ m.nombre }}</option>{% endfor %}
+    </select>
+  </div>
+  <div class="col-6 col-md-2">
+    <select name="categoria" class="form-select">
+      <option value="">Categoría</option>
+      {% for c in categorias %}<option value="{{ c.slug }}" {% if filtros.categoria == c.slug %}selected{% endif %}>{{ c.nombre }}</option>{% endfor %}
+    </select>
+  </div>
+  <div class="col-6 col-md-2">
+    <select name="genero" class="form-select">
+      <option value="">Género</option>
+      <option value="mujer" {% if filtros.genero == "mujer" %}selected{% endif %}>Mujer</option>
+      <option value="hombre" {% if filtros.genero == "hombre" %}selected{% endif %}>Hombre</option>
+      <option value="unisex" {% if filtros.genero == "unisex" %}selected{% endif %}>Unisex</option>
+      <option value="infantil" {% if filtros.genero == "infantil" %}selected{% endif %}>Infantil</option>
+    </select>
+  </div>
+  <div class="col-6 col-md-2">
+    <select name="forma" class="form-select">
+      <option value="">Forma</option>
+      <option value="redonda">Redonda</option>
+      <option value="cuadrada">Cuadrada</option>
+      <option value="aviador">Aviador</option>
+      <option value="cat-eye">Cat-eye</option>
+      <option value="rectangular">Rectangular</option>
+      <option value="ovalada">Ovalada</option>
+    </select>
+  </div>
+  <div class="col-12 col-md-1">
+    <button class="btn btn-primary w-100">Filtrar</button>
+  </div>
+</form>
+<div class="mb-2"><a id="compare-btn" class="btn btn-outline-dark" href="/comparar/">Comparar (0)</a></div>
+<div id="catalogo-grid">
+  {% include "optica/publico/_catalogo_grid.html" %}
+</div>
+{% endblock %}

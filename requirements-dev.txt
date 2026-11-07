@@ -1,0 +1,6 @@
+-r requirements.txt
+django-browser-reload>=1.15
+pytest>=8.3
+pytest-django>=4.9
+coverage>=7.6
+ruff>=0.7
