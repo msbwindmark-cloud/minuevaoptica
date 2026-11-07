@@ -6,6 +6,7 @@ app_name = "optica"
 urlpatterns = [
     # Públicas
     path("sw.js", views.service_worker, name="service_worker"),
+    path("manual.pdf", views.manual_pdf, name="manual_pdf"),
     path("manifest.webmanifest", views.manifest, name="manifest"),
     path("health", views.health, name="health"),
     path("health/", views.health, name="health_slash"),

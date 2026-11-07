@@ -12,7 +12,7 @@
 <h2 class="h5">Modelos más guardados</h2>
 <ul class="list-group mb-3">{% for m in top_guardados %}<li class="list-group-item d-flex justify-content-between">{{ m.marca }} {{ m.nombre }} <span class="badge bg-success">{{ m.guardados }}</span></li>{% empty %}<li class="list-group-item">Sin datos</li>{% endfor %}</ul>
 <h2 class="h5">Consultas por mes</h2>
-<ul class="list-group mb-3">{% for c in consultas_mes %}<li class="list-group-item d-flex justify-content-between">{{ c.m }} <span class="badge bg-secondary">{{ c.n }}</span></li>{% empty %}<li class="list-group-item">Sin datos</li>{% endfor %}</ul>
+<ul class="list-group mb-3">{% for c in consultas_mes %}<li class="list-group-item d-flex justify-content-between">{{ c.m|date:"Y-m" }} <span class="badge bg-secondary">{{ c.n }}</span></li>{% empty %}<li class="list-group-item">Sin datos</li>{% endfor %}</ul>
 <h2 class="h5">Citas por estado</h2>
 <ul class="list-group">{% for c in citas_estado %}<li class="list-group-item d-flex justify-content-between">{{ c.estado }} <span class="badge bg-info">{{ c.n }}</span></li>{% empty %}<li class="list-group-item">Sin datos</li>{% endfor %}</ul>
 {% endblock %}

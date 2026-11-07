@@ -66,6 +66,29 @@ if (localStorage.getItem('darkMode') === 'true') document.body.classList.add('da
 if (localStorage.getItem('hc') === 'true') document.body.classList.add('alto-contraste');
 if (localStorage.getItem('tg') === 'true') document.body.classList.add('texto-grande');
 
+function startTour() {
+  const path = window.location.pathname;
+  let steps = [{intro: 'Bienvenido/a. Pulsa "Siguiente" para recorrer la aplicación. Puedes pulsar "Saltar" en cualquier momento.'}];
+  if (path === '/') {
+    steps = steps.concat([
+      {element: '.navbar', intro: 'Barra de navegación: catálogo, marcas, citas, contacto.'},
+      {element: '.hero', intro: 'Portada con modelos destacados y novedades.'},
+      {element: '.floating-wa', intro: 'Botón de WhatsApp para contactar.'},
+    ]);
+  } else if (path.startsWith('/catalogo')) {
+    steps = steps.concat([
+      {element: '#filtros', intro: 'Filtra por marca, categoría, género, forma y color. Se actualiza solo.'},
+      {element: '#catalogo-grid', intro: 'Resultados: pulsa una gafa para ver detalles o ❤ para favoritos.'},
+      {element: '#compare-btn', intro: 'Comparador de hasta 3 modelos.'},
+    ]);
+  } else if (path.startsWith('/gestion')) {
+    steps = steps.concat([
+      {element: '.container', intro: 'Panel de gestión: modelos, consultas, citas, ajustes.'},
+    ]);
+  }
+  introJs().setOptions({steps: steps, showStepNumbers: true, exitOnOverlayClick: true}).start();
+}
+
 function urlB64ToUint8Array(base64String) {
   const padding = '='.repeat((4 - base64String.length % 4) % 4);
   const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');

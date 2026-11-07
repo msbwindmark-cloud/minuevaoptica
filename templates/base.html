@@ -48,7 +48,9 @@
   {% block footer %}{% include "optica/partials/footer.html" %}{% endblock %}
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="https://unpkg.com/intro.js/minified/introjs.min.css">
   <script src="{% static 'js/app.js' %}"></script>
+  <script src="https://unpkg.com/intro.js/minified/intro.min.js"></script>
   <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js');}</script>
   {% block extra_js %}{% endblock %}
 </body>

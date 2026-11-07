@@ -2,33 +2,47 @@
 {% load i18n %}
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
   <div class="container">
-    <a class="navbar-brand fw-bold" href="{% url 'optica:home' %}">
-      {% if organizacion %}{{ organizacion.nombre }}{% else %}Óptica{% endif %}
+    <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="{% url 'optica:home' %}">
+      {% if ajustes and ajustes.logo %}
+        <img src="{{ ajustes.logo.url }}" alt="logo" style="height:34px; border-radius:8px;">
+      {% else %}
+        <span class="bg-white text-primary rounded-circle d-inline-flex align-items-center justify-content-center" style="width:34px;height:34px;">
+          <i class="bi bi-eyeglasses fs-5"></i>
+        </span>
+      {% endif %}
+      <span>{% if organizacion %}{{ organizacion.nombre }}{% else %}Óptica{% endif %}</span>
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="nav">
       <ul class="navbar-nav me-auto">
-        <li class="nav-item"><a class="nav-link" href="{% url 'optica:catalogo' %}">{% trans "Catálogo" %}</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'optica:marcas' %}">{% trans "Marcas" %}</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'optica:encuentra' %}">{% trans "Encuentra tu montura" %}</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'optica:probador' %}">{% trans "Probador" %}</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'optica:citas' %}">{% trans "Citas" %}</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'optica:novedades' %}">{% trans "Novedades" %}</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'optica:contacto' %}">{% trans "Contacto" %}</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'optica:nosotros' %}">{% trans "Nosotros" %}</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'optica:catalogo' %}"><i class="bi bi-grid me-1"></i>{% trans "Catálogo" %}</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'optica:marcas' %}"><i class="bi bi-tag me-1"></i>{% trans "Marcas" %}</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'optica:encuentra' %}"><i class="bi bi-search me-1"></i>{% trans "Encuentra tu montura" %}</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'optica:probador' %}"><i class="bi bi-camera me-1"></i>{% trans "Probador" %}</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'optica:citas' %}"><i class="bi bi-calendar-event me-1"></i>{% trans "Citas" %}</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'optica:novedades' %}"><i class="bi bi-newspaper me-1"></i>{% trans "Novedades" %}</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'optica:contacto' %}"><i class="bi bi-chat-dots me-1"></i>{% trans "Contacto" %}</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'optica:nosotros' %}"><i class="bi bi-people me-1"></i>{% trans "Nosotros" %}</a></li>
       </ul>
       <ul class="navbar-nav">
-        <li class="nav-item">
+        <li class="nav-item d-flex align-items-center gap-1 ms-2">
           <form action="/i18n/setlang/" method="post" class="d-inline">{% csrf_token %}
             <input name="next" type="hidden" value="{{ request.path }}">
-            <select name="language" class="form-select form-select-sm" onchange="this.form.submit()" aria-label="Idioma">
-              <option value="es" {% if LANGUAGE_CODE == 'es' %}selected{% endif %}>ES</option>
-              <option value="en" {% if LANGUAGE_CODE == 'en' %}selected{% endif %}>EN</option>
-            </select>
+            <input type="hidden" name="language" value="es">
+            <button type="submit" class="btn btn-sm btn-light px-2" title="Español" aria-label="Español">🇪🇸</button>
+          </form>
+          <form action="/i18n/setlang/" method="post" class="d-inline">{% csrf_token %}
+            <input name="next" type="hidden" value="{{ request.path }}">
+            <input type="hidden" name="language" value="en">
+            <button type="submit" class="btn btn-sm btn-light px-2" title="English" aria-label="English">🇬🇧</button>
           </form>
         </li>
+        {% if user.is_authenticated %}
+        <li class="nav-item"><a class="btn btn-sm btn-outline-light ms-2" href="{% url 'optica:manual_pdf' %}" target="_blank">Manual PDF</a></li>
+        {% endif %}
+        <li class="nav-item"><button class="btn btn-sm btn-outline-warning ms-2" onclick="startTour()" aria-label="Tour guiado">Tour</button></li>
         <li class="nav-item"><button class="btn btn-sm btn-outline-light ms-2" onclick="toggleDark()" aria-label="Modo oscuro"><i class="bi bi-moon"></i></button></li>
         <li class="nav-item"><button class="btn btn-sm btn-outline-light ms-2" onclick="document.body.classList.toggle('alto-contraste');localStorage.setItem('hc',document.body.classList.contains('alto-contraste'))" aria-label="Alto contraste">◐</button></li>
         <li class="nav-item"><button class="btn btn-sm btn-outline-light ms-2" onclick="document.body.classList.toggle('texto-grande');localStorage.setItem('tg',document.body.classList.contains('texto-grande'))" aria-label="Texto grande">A+</button></li>

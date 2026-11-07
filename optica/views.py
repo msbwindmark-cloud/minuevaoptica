@@ -5,6 +5,7 @@ from django.core.cache import cache
 from django.core.paginator import Paginator
 from django.db.models import Q, Count
 from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -336,7 +337,14 @@ def gestion_estadisticas(request):
     from django.db.models import Count
     top_vistos = Modelo.objects.filter(organizacion=org).order_by("-vistas")[:5]
     top_guardados = Modelo.objects.filter(organizacion=org).order_by("-guardados")[:5]
-    consultas_mes = Consulta.objects.filter(organizacion=org).extra(select={"m": "strftime('%Y-%m', fecha)"}).values("m").annotate(n=Count("id")).order_by("-m")[:6]
+    from django.db.models.functions import TruncMonth
+    consultas_mes = (
+        Consulta.objects.filter(organizacion=org)
+        .annotate(m=TruncMonth("fecha"))
+        .values("m")
+        .annotate(n=Count("id"))
+        .order_by("-m")[:6]
+    )
     citas_estado = Cita.objects.filter(organizacion=org).values("estado").annotate(n=Count("id"))
     context = {
         "top_vistos": top_vistos,
@@ -478,6 +486,19 @@ def manifest(request):
 def health(request):
     from django.http import JsonResponse
     return JsonResponse({"status": "ok"})
+
+
+@login_required
+def manual_pdf(request):
+    from django.http import FileResponse, Http404
+    import os
+    from django.conf import settings
+    if not (request.user.is_superuser or (hasattr(request.user, "perfil") and request.user.perfil.es_gestor)):
+        raise Http404
+    path = os.path.join(settings.BASE_DIR, "static", "manual_usuario.pdf")
+    if not os.path.exists(path):
+        raise Http404
+    return FileResponse(open(path, "rb"), content_type="application/pdf")
 
 
 def robots_txt(request):
