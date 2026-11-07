@@ -6,9 +6,11 @@
         {% if ajustes %}{{ ajustes.direccion }}<br>{{ ajustes.telefono }}{% endif %}
       </div>
       <div class="col-md-4">
-        <a href="{% url 'optica:aviso_legal' %}">Aviso legal</a> ·
-        <a href="{% url 'optica:privacidad' %}">Privacidad</a> ·
-        <a href="{% url 'optica:cookies' %}">Cookies</a>
+        <a href="{% url 'optica:aviso_legal' %}"><i class="bi bi-file-text"></i> Aviso legal</a> ·
+        <a href="{% url 'optica:privacidad' %}"><i class="bi bi-shield-lock"></i> Privacidad</a> ·
+        <a href="{% url 'optica:cookies' %}"><i class="bi bi-cookie"></i> Cookies</a>
+        {% if ajustes and ajustes.telegram_url %}· <a href="{{ ajustes.telegram_url }}" target="_blank"><i class="bi bi-telegram"></i> Telegram</a>{% endif %}
+        {% if ajustes and ajustes.whatsapp %}· <a href="https://wa.me/{{ ajustes.whatsapp }}" target="_blank"><i class="bi bi-whatsapp"></i> WhatsApp</a>{% endif %}
       </div>
       <div class="col-md-4 text-md-end">
         © {% now "Y" %} Todos los derechos reservados.

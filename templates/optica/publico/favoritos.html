@@ -6,12 +6,15 @@
 <button class="btn btn-success mb-3" onclick="enviarSeleccionWhatsapp('{{ ajustes.whatsapp }}')">Enviar selección por WhatsApp</button>
 <div id="fav-list" class="row g-3"></div>
 <script>
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   const ids = getFavoritos();
   const cont = document.getElementById('fav-list');
   if (!ids.length) { cont.innerHTML = '<p class="text-muted">Sin favoritos.</p>'; return; }
+  const res = await fetch('/api/modelos/'); const json = await res.json();
+  const map = {}; (json.items||[]).forEach(it => map[it.id]=it);
   ids.forEach(id => {
-    cont.innerHTML += `<div class="col-6 col-md-3"><div class="card h-100"><div class="card-body">Modelo #${id}</div></div></div>`;
+    const it = map[id] || {nombre:'Modelo '+id, foto:'', url:'#', precio:''};
+    cont.innerHTML += `<div class="col-6 col-md-3"><div class="card h-100"><img src="${it.foto}" class="card-img-top modelo-img" alt="${it.nombre}" loading="lazy"><div class="card-body"><h3 class="h6">${it.nombre}</h3><p class="small text-muted">${it.precio}</p><a href="${it.url}" class="stretched-link"></a></div></div></div>`;
   });
 });
 </script>

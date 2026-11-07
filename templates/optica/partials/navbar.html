@@ -27,16 +27,27 @@
         <li class="nav-item"><a class="nav-link" href="{% url 'optica:nosotros' %}"><i class="bi bi-people me-1"></i>{% trans "Nosotros" %}</a></li>
       </ul>
       <ul class="navbar-nav">
+        {% if ajustes and ajustes.telegram_url %}
+        <li class="nav-item">
+          <a class="btn btn-sm btn-outline-light ms-2" href="{{ ajustes.telegram_url }}" target="_blank" aria-label="Telegram"><i class="bi bi-telegram"></i></a>
+        </li>
+        {% endif %}
         <li class="nav-item d-flex align-items-center gap-1 ms-2">
           <form action="/i18n/setlang/" method="post" class="d-inline">{% csrf_token %}
             <input name="next" type="hidden" value="{{ request.path }}">
             <input type="hidden" name="language" value="es">
-            <button type="submit" class="btn btn-sm btn-light px-2" title="Español" aria-label="Español">🇪🇸</button>
+            <button type="submit" class="btn btn-sm px-1 py-0 d-flex flex-column align-items-center" title="Español" aria-label="Español" style="line-height:1; background:transparent; border:none;">
+              <img src="{% static 'flag-es.png' %}" alt="" width="30" height="20" style="border-radius:3px; box-shadow:0 1px 3px rgba(0,0,0,.3);">
+              <span style="font-size:11px; font-weight:700; color:#fff;">ES</span>
+            </button>
           </form>
           <form action="/i18n/setlang/" method="post" class="d-inline">{% csrf_token %}
             <input name="next" type="hidden" value="{{ request.path }}">
             <input type="hidden" name="language" value="en">
-            <button type="submit" class="btn btn-sm btn-light px-2" title="English" aria-label="English">🇬🇧</button>
+            <button type="submit" class="btn btn-sm px-1 py-0 d-flex flex-column align-items-center" title="English" aria-label="English" style="line-height:1; background:transparent; border:none;">
+              <img src="{% static 'flag-gb.png' %}" alt="" width="30" height="20" style="border-radius:3px; box-shadow:0 1px 3px rgba(0,0,0,.3);">
+              <span style="font-size:11px; font-weight:700; color:#fff;">EN</span>
+            </button>
           </form>
         </li>
         {% if user.is_authenticated %}
@@ -65,3 +76,8 @@
 <a href="https://wa.me/{{ ajustes.whatsapp|default:'' }}" class="btn btn-success floating-wa" target="_blank" aria-label="WhatsApp">
   <i class="bi bi-whatsapp fs-4"></i>
 </a>
+{% if ajustes and ajustes.telegram_url %}
+<a href="{{ ajustes.telegram_url }}" class="btn btn-info floating-wa" style="bottom:5rem;" target="_blank" aria-label="Telegram">
+  <i class="bi bi-telegram fs-4"></i>
+</a>
+{% endif %}

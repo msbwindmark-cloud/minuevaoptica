@@ -64,6 +64,20 @@ class Ajustes(TenantModel):
     instagram = models.URLField(blank=True)
     facebook = models.URLField(blank=True)
     tiktok = models.URLField(blank=True)
+    telegram = models.URLField(blank=True)
+
+    @property
+    def telegram_url(self):
+        val = (self.telegram or "").strip()
+        if not val:
+            return ""
+        if val.startswith("http://") or val.startswith("https://") or val.startswith("tg://"):
+            return val
+        if val.startswith("@"):
+            val = val.lstrip("@")
+        if val.isdigit():
+            return f"https://t.me/+{val}"
+        return f"https://t.me/{val}"
     texto_portada = models.TextField(blank=True)
     logo = models.ImageField(upload_to="optica/logos/", blank=True, null=True)
     color_primario = models.CharField(max_length=20, default="#1e3a5f")

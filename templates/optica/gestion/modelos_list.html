@@ -5,6 +5,8 @@
   <h1 class="h3 mb-0">Modelos</h1>
   <a class="btn btn-primary" href="{% url 'optica:gestion_modelo_crear' %}">Nuevo</a>
   <a class="btn btn-outline-primary" href="{% url 'optica:gestion_modelo_rapido' %}">Rápido 30s</a>
+  <a class="btn btn-outline-success" href="{% url 'optica:gestion_export_modelos' 'xlsx' %}">Excel</a>
+  <a class="btn btn-outline-danger" href="{% url 'optica:gestion_export_modelos' 'pdf' %}">PDF</a>
 </div>
 <form method="get" class="mb-3"><input name="q" value="{{ q }}" class="form-control" placeholder="Buscar"></form>
 <div id="modelos-rows">

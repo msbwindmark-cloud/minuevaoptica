@@ -501,6 +501,84 @@ def manual_pdf(request):
     return FileResponse(open(path, "rb"), content_type="application/pdf")
 
 
+def api_modelos(request):
+    org = _org(request)
+    items = []
+    for m in Modelo.objects.filter(organizacion=org, visible=True):
+        fp = m.foto_portada
+        items.append({
+            "id": m.id,
+            "nombre": str(m),
+            "slug": m.slug,
+            "url": reverse("optica:modelo_detail", args=[m.slug]),
+            "foto": fp.imagen.url if fp else "",
+            "precio": m.precio_display,
+            "agotado": m.agotado,
+        })
+    return JsonResponse({"items": items})
+
+
+@gestor_required
+def gestion_opiniones(request):
+    org = _org(request)
+    if request.method == "POST":
+        nombre = request.POST.get("nombre")
+        texto = request.POST.get("texto")
+        if nombre and texto:
+            Opinion.objects.create(organizacion=org, nombre=nombre, texto=texto, visible=True)
+            return redirect("optica:gestion_opiniones")
+    opiniones = Opinion.objects.filter(organizacion=org)
+    return render(request, "optica/gestion/opiniones.html", {"opiniones": opiniones})
+
+
+@gestor_required
+@require_POST
+def gestion_opinion_borrar(request, pk):
+    org = _org(request)
+    op = get_object_or_404(Opinion, pk=pk, organizacion=org)
+    op.delete()
+    return redirect("optica:gestion_opiniones")
+
+
+@gestor_required
+def gestion_export_modelos(request, fmt):
+    org = _org(request)
+    modelos = Modelo.objects.filter(organizacion=org).select_related("marca", "categoria")
+    if fmt == "xlsx":
+        from openpyxl import Workbook
+        from django.http import HttpResponse
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "Modelos"
+        ws.append(["Marca", "Nombre", "Categoría", "Precio", "Material", "Forma", "Color", "Visible"])
+        for m in modelos:
+            ws.append([str(m.marca), m.nombre, str(m.categoria), str(m.precio or ""), m.material, m.forma, m.color, m.visible])
+        resp = HttpResponse(content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        resp["Content-Disposition"] = 'attachment; filename="modelos.xlsx"'
+        wb.save(resp)
+        return resp
+    if fmt == "pdf":
+        from reportlab.lib.pagesizes import A4, landscape
+        from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+        from reportlab.lib import colors
+        from django.http import HttpResponse
+        from io import BytesIO
+        buf = BytesIO()
+        doc = SimpleDocTemplate(buf, pagesize=landscape(A4))
+        data = [["Marca", "Nombre", "Categoría", "Precio", "Material", "Color"]]
+        for m in modelos:
+            data.append([str(m.marca), m.nombre, str(m.categoria), m.precio_display, m.material, m.color])
+        table = Table(data)
+        table.setStyle(TableStyle([("BACKGROUND", (0,0), (-1,0), colors.HexColor("#0ea5a4")), ("TEXTCOLOR", (0,0), (-1,0), colors.white), ("GRID", (0,0), (-1,-1), .5, colors.grey)]))
+        doc.build([table])
+        buf.seek(0)
+        resp = HttpResponse(buf.getvalue(), content_type="application/pdf")
+        resp["Content-Disposition"] = 'attachment; filename="modelos.pdf"'
+        return resp
+    from django.http import Http404
+    raise Http404
+
+
 def robots_txt(request):
     from django.http import HttpResponse
     content = "User-agent: *\nAllow: /\nSitemap: /sitemap.xml\n"

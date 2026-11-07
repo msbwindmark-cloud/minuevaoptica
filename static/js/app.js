@@ -66,6 +66,17 @@ if (localStorage.getItem('darkMode') === 'true') document.body.classList.add('da
 if (localStorage.getItem('hc') === 'true') document.body.classList.add('alto-contraste');
 if (localStorage.getItem('tg') === 'true') document.body.classList.add('texto-grande');
 
+function aceptarCookies(acepta) {
+  localStorage.setItem('cookiesConsent', acepta ? 'accepted' : 'rejected');
+  const b = document.getElementById('cookie-banner');
+  if (b) b.style.display = 'none';
+}
+document.addEventListener('DOMContentLoaded', () => {
+  const c = localStorage.getItem('cookiesConsent');
+  const b = document.getElementById('cookie-banner');
+  if (b && !c) b.style.display = 'block';
+});
+
 function startTour() {
   const path = window.location.pathname;
   let steps = [{intro: 'Bienvenido/a. Pulsa "Siguiente" para recorrer la aplicación. Puedes pulsar "Saltar" en cualquier momento.'}];

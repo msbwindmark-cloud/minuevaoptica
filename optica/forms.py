@@ -105,7 +105,7 @@ class AjustesForm(forms.ModelForm):
         fields = [
             "nombre_comercial", "direccion", "telefono", "whatsapp", "email",
             "horario", "vacaciones", "google_maps_url", "google_reviews_url", "instagram", "facebook",
-            "tiktok", "texto_portada", "logo", "color_primario", "color_secundario",
+            "tiktok", "telegram", "texto_portada", "logo", "color_primario", "color_secundario",
         ]
         widgets = {f: forms.TextInput(attrs={"class": "form-control"}) for f in [
             "nombre_comercial", "direccion", "telefono", "whatsapp", "email",

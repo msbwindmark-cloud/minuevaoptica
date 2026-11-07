@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Opiniones{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Opiniones de clientes</h1>
+<form method="post" class="card p-3 mb-3">
+  {% csrf_token %}
+  <div class="mb-2"><input name="nombre" class="form-control" placeholder="Nombre" required></div>
+  <div class="mb-2"><textarea name="texto" class="form-control" placeholder="Opinión" required></textarea></div>
+  <button class="btn btn-primary">Añadir</button>
+</form>
+<ul class="list-group">
+  {% for o in opiniones %}
+  <li class="list-group-item d-flex justify-content-between">
+    <span><strong>{{ o.nombre }}</strong>: {{ o.texto }}</span>
+    <form method="post" action="{% url 'optica:gestion_opinion_borrar' o.pk %}">{% csrf_token %}<button class="btn btn-sm btn-outline-danger">Borrar</button></form>
+  </li>
+  {% empty %}<li class="list-group-item">Sin opiniones</li>{% endfor %}
+</ul>
+{% endblock %}
