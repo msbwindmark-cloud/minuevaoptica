@@ -77,6 +77,18 @@ document.addEventListener('DOMContentLoaded', () => {
   if (b && !c) b.style.display = 'block';
 });
 
+// Fallback: si Bootstrap no cargara, el menú móvil sigue abriendo
+document.addEventListener('DOMContentLoaded', () => {
+  const toggler = document.querySelector('.navbar-toggler');
+  const nav = document.querySelector('#nav');
+  if (toggler && nav && !window.bootstrap) {
+    toggler.addEventListener('click', (e) => {
+      e.preventDefault();
+      nav.classList.toggle('show');
+    });
+  }
+});
+
 function startTour() {
   const path = window.location.pathname;
   let steps = [{intro: 'Bienvenido/a. Pulsa "Siguiente" para recorrer la aplicación. Puedes pulsar "Saltar" en cualquier momento.'}];
