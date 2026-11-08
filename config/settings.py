@@ -45,7 +45,9 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-if DEBUG:
+ON_PYTHONANYWHERE = bool(os.environ.get("PYTHONANYWHERE_DOMAIN") or os.environ.get("PYTHONANYWHERE_SITE"))
+
+if DEBUG and not ON_PYTHONANYWHERE:
     try:
         INSTALLED_APPS += ["django_browser_reload"]
         MIDDLEWARE += ["django_browser_reload.middleware.BrowserReloadMiddleware"]
